@@ -23,6 +23,28 @@ let savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify({
     }
 }));
 
+// JSON読み込みのメインロジック
+document.getElementById('json-input').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    try {
+      const importedData = JSON.parse(event.target.result);
+      
+      // 【重要】既存の保存処理（localStorageなど）に合わせて書き換え
+      // 例: localStorage.setItem('manga-tasks', JSON.stringify(importedData));
+      
+      alert("データを読み込みました。画面を更新します。");
+      location.reload(); // 反映のためにリロード
+    } catch (err) {
+      alert("エラー：正しいJSONファイルを選択してください。");
+    }
+  };
+  reader.readAsText(file);
+});
+
 function init() {
     projectTitle.value = savedData.title;
     mainPlot.value = savedData.plot;
@@ -399,3 +421,4 @@ projectTitle.addEventListener('input', saveAll);
 mainPlot.addEventListener('input', saveAll);
 
 init();
+

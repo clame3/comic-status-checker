@@ -21,13 +21,21 @@
 </head>
 <body class="bg-gray-100 text-gray-900 h-screen flex flex-col overflow-hidden font-sans">
 
+        
     <header class="h-16 border-b border-gray-200 flex items-center justify-between px-4 bg-white z-20 flex-shrink-0 shadow-sm">
         <div class="flex items-center space-x-4">
-            <h1 class="text-xl font-black tracking-tighter text-blue-600">漫画進捗管理App</h1>
+            <h1 class="app-title">
+                <span class="full-text text-xl font-black tracking-tighter text-blue-600">漫画進捗管理App</span>
+                <span class="short-text text-sm font-black tracking-tighter text-blue-600">進捗App</span>
+            </h1>
             <input type="text" id="project-title" class="bg-gray-50 border border-gray-200 rounded px-2 py-1 focus:outline-none text-sm w-32 md:w-48" value="新刊ネーム">
         </div>
-        
+
         <div class="flex items-center space-x-3">
+            <div class="import-area">
+            <input type="file" id="json-input" accept=".json" style="display:none;">
+            <button onclick="document.getElementById('json-input').click()">JSONを読み込む</button>
+            </div>
             <button onclick="exportData()" title="保存" class="p-2 rounded-full hover:bg-gray-100 text-gray-600">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
             </button>

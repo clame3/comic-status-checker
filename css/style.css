@@ -24,3 +24,50 @@
     display: flex;
     flex-direction: column;
 }
+
+/* デフォルト（スマホ）設定 */
+.full-text { display: none; }
+.short-text { display: inline; font-weight: bold; white-space: nowrap;}
+.app-title { line-height: 1px!important; }
+
+/* PCサイズ（例: 768px以上）の設定 */
+@media (min-width: 768px) {
+  .full-text { display: inline; }
+  .short-text { display: none; }
+}
+
+/* インポートエリア全体のスタイル */
+.import-area {
+  margin: 20px 0;
+  text-align: center;
+}
+
+/* ボタン自体のデザイン */
+.import-area button {
+  background-color: #5a5a5a; /* 清潔感のあるブルー */
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 4px; /* 角を丸くしてモダンに */
+  cursor: pointer;
+  transition: all 0.2s ease; /* 変化をなめらかに */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 軽い浮き出し感 */
+  width: 100%; /* スマホで押しやすいよう横幅いっぱいに（必要に応じて調整） */
+  max-width: 300px;
+}
+
+/* マウスを乗せた時（PC） */
+.import-area button:hover {
+  background-color: #aaaaaa;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* タップした瞬間（スマホ・PC共通） */
+.import-area button:active {
+  background-color: #3a3a3a;
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
