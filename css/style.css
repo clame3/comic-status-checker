@@ -1,0 +1,26 @@
+/* css/style.css */
+
+.page-content {
+    width: 100% !important; /* 横幅を強制的に100%に */
+    font-size: 11px !important;
+    line-height: 1.8 !important;
+    letter-spacing: 0.02em;
+    padding: 0 !important; /* 内側のパディングを一旦リセット */
+    
+    /* スクロールバーを消す */
+    overflow: hidden !important; 
+    resize: none !important;
+    
+    /* 高さ設定 */
+    height: auto !important;
+    min-height: 100% !important;
+    
+    background: transparent;
+    border: none;
+}
+
+/* 原稿用紙の枠との位置関係を調整 */
+.genkou-paper {
+    display: flex;
+    flex-direction: column;
+}

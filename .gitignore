@@ -1,0 +1,14 @@
+# OSが生成するキャッシュファイル（Mac / Windows）
+.DS_Store
+Thumbs.db
+
+# ブラウザやエディタの一時ファイル
+.idea/
+.vscode/
+*.swp
+
+# ログファイル
+*.log
+
+# （もし今後使う予定があれば）環境変数ファイル
+.env
