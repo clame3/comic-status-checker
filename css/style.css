@@ -71,3 +71,53 @@
   transform: translateY(1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+/* カードに感情の「線」を入れるための共通設定 */
+.task-card {
+    border-left: 8px solid #ccc; /* デフォルトの色 */
+    padding-left: 15px !important; /* 線が入る分、左の余白を確保 */
+    transition: all 0.3s ease;
+}
+
+/* 感情ごとのクラス */
+.task-card.peak { border-left-color: #ff4b2b; background-color: #fff5f5; }
+.task-card.emotional { border-left-color: #a29bfe; background-color: #f8f7ff; }
+.task-card.daily { border-left-color: #55efc4; background-color: #f0fff4; }
+.task-card.sad { border-left-color: #74b9ff; background-color: #f0f7ff; }
+
+/* カード上部のレイアウトを整える */
+.card-header {
+    display: flex;
+    justify-content: space-between; /* ページ数とパレットを左右にわける */
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* 感情パレットのスタイル */
+.emotion-selector {
+    display: flex;
+    gap: 8px; /* アイコン同士の間隔（スマホで押しやすく） */
+    background: rgba(0,0,0,0.05); /* どこにあるかわかりやすく薄く背景を敷く */
+    padding: 4px 8px;
+    border-radius: 20px;
+}
+
+.emotion-selector span {
+    cursor: pointer;
+    font-size: 18px; /* 少し大きくしてタップしやすく */
+    transition: transform 0.1s ease;
+    display: inline-block;
+}
+
+.emotion-selector span:active {
+    transform: scale(1.4); /* タップした瞬間に大きくして反応を出す */
+}
+
+/* 前回のステップで入れたカードの「左線」も忘れずに */
+.task-card {
+    position: relative;
+    border-left: 10px solid #eee; /* デフォルトは薄いグレー */
+    padding-left: 15px !important;
+}
+
+.emotion-selector { z-index: 10; position: relative; }

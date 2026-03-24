@@ -86,6 +86,50 @@ function switchMode(mode) {
     }
 }
 
+//感情（色ラベル）を更新する関数
+function updateEmotion(taskId, emotionClass) {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+        task.emotion = emotionClass;
+        saveTasks();
+        renderTasks();
+    }
+}
+
+
+// タスク一覧を再描画する関数
+function renderTasks() {
+    const container = document.getElementById('task-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    tasks.forEach(task => {
+        const card = document.createElement('div');
+        // 状態（status）と感情（emotion）をクラスとして付与
+        card.className = `task-card ${task.status} ${task.emotion || ''}`;
+
+        card.innerHTML = `
+            <div class="card-header">
+                <span class="page-num">${task.page}P</span>
+                <div class="emotion-selector">
+                    <span onclick="updateEmotion(${task.id}, 'peak')" title="盛り上がり">🔴</span>
+                    <span onclick="updateEmotion(${task.id}, 'daily')" title="日常">🟢</span>
+                    <span onclick="updateEmotion(${task.id}, 'emotional')" title="エモい">🟣</span>
+                    <span onclick="updateEmotion(${task.id}, 'sad')" title="切ない">🔵</span>
+                </div>
+            </div>
+            <div class="task-title">${task.title}</div>
+            <div class="status-buttons">
+                <button onclick="updateStatus(${task.id}, 'todo')" class="${task.status === 'todo' ? 'active' : ''}">未</button>
+                <button onclick="updateStatus(${task.id}, 'doing')" class="${task.status === 'doing' ? 'active' : ''}">進</button>
+                <button onclick="updateStatus(${task.id}, 'done')" class="${task.status === 'done' ? 'active' : ''}">済</button>
+            </div>
+            <button class="delete-btn" onclick="deleteTask(${task.id})">削除</button>
+        `;
+        container.appendChild(card);
+    });
+}
+
 // --- ページ構成の描画 ---
 function renderPages() {
     gridContainer.innerHTML = '';
