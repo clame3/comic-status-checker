@@ -96,81 +96,84 @@ function updateEmotion(taskId, emotionClass) {
     }
 }
 
-
-// タスク一覧を再描画する関数
-function renderTasks() {
-    const container = document.getElementById('task-container');
-    if (!container) return;
-    container.innerHTML = '';
-
-    tasks.forEach(task => {
-        const card = document.createElement('div');
-        // 状態（status）と感情（emotion）をクラスとして付与
-        card.className = `task-card ${task.status} ${task.emotion || ''}`;
-
-        card.innerHTML = `
-            <div class="card-header">
-                <span class="page-num">${task.page}P</span>
-                <div class="emotion-selector">
-                    <span onclick="updateEmotion(${task.id}, 'peak')" title="盛り上がり">🔴</span>
-                    <span onclick="updateEmotion(${task.id}, 'daily')" title="日常">🟢</span>
-                    <span onclick="updateEmotion(${task.id}, 'emotional')" title="エモい">🟣</span>
-                    <span onclick="updateEmotion(${task.id}, 'sad')" title="切ない">🔵</span>
-                </div>
-            </div>
-            <div class="task-title">${task.title}</div>
-            <div class="status-buttons">
-                <button onclick="updateStatus(${task.id}, 'todo')" class="${task.status === 'todo' ? 'active' : ''}">未</button>
-                <button onclick="updateStatus(${task.id}, 'doing')" class="${task.status === 'doing' ? 'active' : ''}">進</button>
-                <button onclick="updateStatus(${task.id}, 'done')" class="${task.status === 'done' ? 'active' : ''}">済</button>
-            </div>
-            <button class="delete-btn" onclick="deleteTask(${task.id})">削除</button>
-        `;
-        container.appendChild(card);
-    });
+// 感情（色）を更新する関数
+function updateEmotion(id, emotion) {
+    // tasksが未定義、または空の場合は何もしない
+    if (!window.tasks) return; 
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+        task.emotion = emotion;
+        if (typeof saveTasks === 'function') saveTasks();
+        renderTasks();
+    }
 }
 
+
 // --- ページ構成の描画 ---
+// --- ページ構成の描画（感情ボタン統合版） ---
 function renderPages() {
+    const gridContainer = document.getElementById('grid-container');
+    if (!gridContainer) return;
     gridContainer.innerHTML = '';
 
     savedData.pages.forEach((content, i) => {
         const pageNum = i + 1;
+        // 保存データに感情(emotion)がない場合の初期化
+        if (!savedData.emotions) savedData.emotions = {};
+        const currentEmotion = savedData.emotions[i] || '';
+
         const card = document.createElement('div');
-        card.className = `page-card flex flex-col items-center w-full px-1 relative group`;
+        // task-cardクラスと感情クラスを付与
+        card.className = `page-card flex flex-col items-center w-full px-1 relative group task-card ${currentEmotion}`;
         
         card.innerHTML = `
             <div class="aspect-[257/364] w-full bg-white shadow-sm border border-gray-200 rounded-sm p-4 genkou-paper relative hover:shadow-md transition-shadow flex flex-col">
-                <div class="safety-line pointer-events-none"></div>
-                <div class="absolute top-1 left-2 text-[10px] font-bold text-gray-300">P.${pageNum}</div>
+                <div class="status-bar"></div>
                 
-                <button onclick="addFrame(${i})" class="absolute top-1 right-8 bg-blue-100 text-blue-600 rounded px-2 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-30 text-[9px] font-bold hover:bg-blue-200">+コマ追加</button>
+                <div class="safety-line pointer-events-none"></div>
+                
+                <div class="absolute top-1 left-2 z-30">
+                    <span class="text-[10px] font-bold text-gray-300 ml-2">P.${pageNum}</span>
+                </div>
+
+                <div class="emotion-selector absolute bottom-2 right-2 flex gap-1.5 bg-gray-100/90 rounded-full px-2 py-1 shadow-inner z-40 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span onclick="updatePageEmotion(${i}, 'peak')" title="盛り上がり" class="cursor-pointer hover:scale-125 transition-transform text-base">🔴</span>
+                    <span onclick="updatePageEmotion(${i}, 'daily')" title="日常" class="cursor-pointer hover:scale-125 transition-transform text-base">🟢</span>
+                    <span onclick="updatePageEmotion(${i}, 'emotional')" title="エモい" class="cursor-pointer hover:scale-125 transition-transform text-base">🟣</span>
+                    <span onclick="updatePageEmotion(${i}, 'sad')" title="切ない" class="cursor-pointer hover:scale-125 transition-transform text-base">🔵</span>
+                </div>
+                
+                <button onclick="addFrame(${i})" class="absolute top-1 right-2 bg-blue-100 text-blue-600 rounded px-2 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-30 text-[9px] font-bold hover:bg-blue-200">+コマ追加</button>
                 
                 <button onclick="removePage(${i})" class="absolute -top-2 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-30 text-xs shadow-sm hover:bg-red-600">×</button>
                 
-                <textarea class="page-content w-full flex-1 focus:outline-none resize-none z-10" placeholder="内容...">${content}</textarea>
+                <textarea class="page-content w-full flex-1 focus:outline-none resize-none z-10 bg-transparent mt-4 mb-8" placeholder="内容...">${content}</textarea>
             </div>
         `;
         
         const textarea = card.querySelector('textarea');
-
-        // 高さを自動調整する関数
         const autoResize = (el) => {
             el.style.height = 'auto'; 
             el.style.height = el.scrollHeight + 'px';
         };
 
         textarea.addEventListener('input', (e) => { 
-            autoResize(e.target); // 入力時に高さを変える
+            autoResize(e.target);
             savedData.pages[i] = e.target.value; 
             saveAll(); 
         });
 
         gridContainer.appendChild(card);
-
-        // 描画した直後に一度高さを合わせる
         setTimeout(() => autoResize(textarea), 0);
     });
+}
+
+// 感情を更新する新しい関数
+function updatePageEmotion(pageIndex, emotionClass) {
+    if (!savedData.emotions) savedData.emotions = {};
+    savedData.emotions[pageIndex] = emotionClass;
+    saveAll();
+    renderPages(); // 再描画して色を反映
 }
 
 function createPageCard(index, content = "") {
