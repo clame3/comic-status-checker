@@ -23,26 +23,52 @@ let savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify({
     }
 }));
 
-// JSON読み込みのメインロジック
+/* --- JSONインポート機能の強化版 --- */
 document.getElementById('json-input').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = function(event) {
-    try {
-      const importedData = JSON.parse(event.target.result);
-      
-      // 【重要】既存の保存処理（localStorageなど）に合わせて書き換え
-      // 例: localStorage.setItem('manga-tasks', JSON.stringify(importedData));
-      
-      alert("データを読み込みました。画面を更新します。");
-      location.reload(); // 反映のためにリロード
-    } catch (err) {
-      alert("エラー：正しいJSONファイルを選択してください。");
-    }
-  };
-  reader.readAsText(file);
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        try {
+            const importedData = JSON.parse(event.target.result);
+            
+            // 1. 基本データの復元
+            if (importedData.title) {
+                localStorage.setItem('manga_project_title', importedData.title);
+            }
+            if (importedData.deadlineDate) {
+                localStorage.setItem('manga_deadline', importedData.deadlineDate);
+            }
+            if (importedData.plot) {
+                localStorage.setItem('manga_plot_text', importedData.plot);
+            }
+
+            // 2. ページ内容と感情データの統合
+            // JSONの pages 配列を元に、新しい内部用データ構造を作ります
+            const combinedPages = importedData.pages.map((content, index) => {
+                const pageNum = index + 1;
+                return {
+                    content: content,
+                    // emotions オブジェクトから該当するキーの感情を取得
+                    emotion: importedData.emotions && importedData.emotions[pageNum] 
+                             ? importedData.emotions[pageNum] 
+                             : ""
+                };
+            });
+
+            // 統合したデータを保存
+            localStorage.setItem('manga_progress_data', JSON.stringify(combinedPages));
+
+            alert("データを読み込みました！");
+            location.reload(); // 再描画
+
+        } catch (err) {
+            console.error(err);
+            alert("JSONの読み込みに失敗しました。形式を確認してください。");
+        }
+    };
+    reader.readAsText(file);
 });
 
 function init() {
@@ -137,6 +163,7 @@ function renderPages() {
                 </div>
 
                 <div class="emotion-selector absolute bottom-2 right-2 flex gap-1.5 bg-gray-100/90 rounded-full px-2 py-1 shadow-inner z-40 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span onclick="updatePageEmotion(${i}, '')" title="リセット" class="reset-dot"></span>
                     <span onclick="updatePageEmotion(${i}, 'peak')" title="盛り上がり" class="cursor-pointer hover:scale-125 transition-transform text-base">🔴</span>
                     <span onclick="updatePageEmotion(${i}, 'daily')" title="日常" class="cursor-pointer hover:scale-125 transition-transform text-base">🟢</span>
                     <span onclick="updatePageEmotion(${i}, 'emotional')" title="エモい" class="cursor-pointer hover:scale-125 transition-transform text-base">🟣</span>
@@ -145,7 +172,7 @@ function renderPages() {
                 
                 <button onclick="addFrame(${i})" class="absolute top-1 right-2 bg-blue-100 text-blue-600 rounded px-2 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-30 text-[9px] font-bold hover:bg-blue-200">+コマ追加</button>
                 
-                <button onclick="removePage(${i})" class="absolute -top-2 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-30 text-xs shadow-sm hover:bg-red-600">×</button>
+                <button onclick="removePage(${i})" class="absolute -top-1 -right-1 ...">×</button>
                 
                 <textarea class="page-content w-full flex-1 focus:outline-none resize-none z-10 bg-transparent mt-4 mb-8" placeholder="内容...">${content}</textarea>
             </div>

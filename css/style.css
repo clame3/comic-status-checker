@@ -1,5 +1,23 @@
 /* css/style.css */
 
+header {
+    /* 背景を少し透かして今風に */
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+}
+
+#project-title {
+    /* 入力欄を「ただの文字」ではなく「UIパーツ」として際立たせる */
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+/* スマホでのボタンサイズ調整 */
+@media (max-width: 640px) {
+    header {
+        padding: 10px 16px !important;
+    }
+}
+
 .page-content {
     width: 100% !important; /* 横幅を強制的に100%に */
     font-size: 11px !important;
@@ -72,13 +90,26 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* 感情パレットのスタイル */
+/* 参考UIのようなモダンなカードスタイル */
+.page-card {
+    background: #ffffff;
+    border-radius: 16px !important; /* 角丸を大きく */
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important; /* 柔らかい影 */
+    border: 1px solid #f0f0f5 !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.page-card:hover {
+    transform: translateY(-4px); /* 少し浮き上がる */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* 🔴🟣パレットもこのUI風に */
 .emotion-selector {
-    display: flex;
-    gap: 8px; /* アイコン同士の間隔（スマホで押しやすく） */
-    background: rgba(0,0,0,0.05); /* どこにあるかわかりやすく薄く背景を敷く */
-    padding: 4px 8px;
-    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(8px); /* ガラスのような透け感 */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .emotion-selector span {
@@ -123,4 +154,59 @@
     background-color: #eee;
     z-index: 20;
     border-radius: 4px 0 0 4px;
+}
+
+/* リセットボタン（グレーの丸）のスタイル */
+.reset-dot {
+    width: 18px;           /* 🔴などの絵文字とサイズを合わせる */
+    height: 18px;
+    background-color: #ddd; /* ★バーと同じグレーに設定 */
+    border: 1px solid #ccc; /* 少しだけ境目を見やすく */
+    border-radius: 50%;    /* 正円にする */
+    cursor: pointer;
+    display: inline-block;
+    transition: transform 0.1s ease, background-color 0.2s;
+    margin: 3px 2px 0 0;     /* 他のボタンとの間隔 */
+}
+
+.reset-dot:hover {
+    transform: scale(1.2);
+    background-color: #ccc; /* ホバー時は少し濃くして反応を出す */
+}
+
+/* スマホ最適化の決定版 */
+@media (max-width: 640px) {
+    /* 1. グリッドの余白を最小限に */
+    #grid-container {
+        grid-template-columns: repeat(2, 1fr) !important; /* 2列固定 */
+        gap: 8px !important;
+        padding: 8px !important;
+    }
+
+    /* 2. カード自体のパディングを削って内容を広く */
+    .genkou-paper {
+        padding: 8px 6px 8px 12px !important; /* 左側(バー側)だけ少し開ける */
+    }
+
+    /* 3. プロットエリアをコンパクトに */
+    #plot-area {
+        max-height: 150px;
+        font-size: 12px;
+    }
+
+    /* 4. ヘッダーのタブをスマホでスッキリ */
+    .tab-menu {
+        display: flex;
+        justify-content: space-around;
+        font-size: 14px;
+    }
+
+    /* 5. 右下の🔴🟣パレットを「浮かせる」 */
+    .emotion-selector {
+        transform: scale(1.1); /* 少し大きく */
+        bottom: 5px !important;
+        right: 5px !important;
+        background: rgba(255, 255, 255, 0.98) !important;
+        border: 1px solid #ddd;
+    }
 }

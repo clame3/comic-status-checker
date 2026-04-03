@@ -22,33 +22,50 @@
 <body class="bg-gray-100 text-gray-900 h-screen flex flex-col overflow-hidden font-sans">
 
         
-    <header class="h-16 border-b border-gray-200 flex items-center justify-between px-4 bg-white z-20 flex-shrink-0 shadow-sm">
-        <div class="flex items-center space-x-4">
-            <h1 class="app-title">
-                <span class="full-text text-xl font-black tracking-tighter text-blue-600">漫画進捗管理App</span>
-                <span class="short-text text-sm font-black tracking-tighter text-blue-600">進捗App</span>
-            </h1>
-            <input type="text" id="project-title" class="bg-gray-50 border border-gray-200 rounded px-2 py-1 focus:outline-none text-sm w-32 md:w-48" value="新刊ネーム">
-        </div>
-
-        <div class="flex items-center space-x-3">
-            <div class="import-area">
-            <input type="file" id="json-input" accept=".json" style="display:none;">
-            <button onclick="document.getElementById('json-input').click()">JSONを読み込む</button>
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 px-4 py-3 flex flex-col gap-3 shadow-sm">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-black shadow-lg shadow-indigo-100 text-sm">P</div>
+                <h1 class="app-title">
+                    <span class="full-text text-lg font-black tracking-tighter text-gray-800">漫画進捗管理App</span>
+                    <span class="short-text text-sm font-black tracking-tighter text-gray-800">進捗App</span>
+                </h1>
             </div>
-            <button onclick="exportData()" title="保存" class="p-2 rounded-full hover:bg-gray-100 text-gray-600">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-            </button>
-            <div class="h-8 w-px bg-gray-200 mx-2"></div>
+
             <div class="flex flex-col items-end">
-                <p class="text-[10px] text-gray-400 font-bold leading-none">入稿締め切り日</p>
-                <div class="flex items-center space-x-2">
-                    <input type="date" id="deadline-date" class="text-xs bg-gray-50 border border-gray-200 rounded px-1 focus:outline-none">
-                    <div class="flex items-baseline bg-red-50 px-2 rounded border border-red-100">
-                        <span id="days-left" class="text-lg font-black text-red-600 tracking-tighter">--</span>
-                        <span class="text-[10px] font-bold text-red-600 ml-0.5">日</span>
+                <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest leading-none mb-1">入稿締切</p>
+                <div class="flex items-center gap-2">
+                    <input type="date" id="deadline-date" class="text-[10px] bg-gray-50 border-none rounded-md px-1 focus:ring-1 focus:ring-indigo-500">
+                    <div class="flex items-baseline bg-red-50 px-2 py-0.5 rounded-full border border-red-100">
+                        <span id="days-left" class="text-sm font-black text-red-600 tracking-tighter">--</span>
+                        <span class="text-[9px] font-bold text-red-600 ml-0.5">日</span>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <div class="flex-1 relative">
+                <input type="text" id="project-title" 
+                    class="w-full bg-gray-100 border-none rounded-xl py-2 px-3 text-xs font-bold text-gray-700 focus:ring-2 focus:ring-indigo-500 transition-all" 
+                    value="新刊ネーム">
+            </div>
+
+            <div class="flex items-center gap-1">
+                <input type="file" id="json-input" accept=".json" style="display:none;">
+                <button onclick="document.getElementById('json-input').click()" 
+                        class="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors" title="JSONを読み込む">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                </button>
+
+                <button onclick="exportData()" title="保存" 
+                        class="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                </button>
             </div>
         </div>
     </header>
