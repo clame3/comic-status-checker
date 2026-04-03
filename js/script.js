@@ -23,7 +23,7 @@ let savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify({
     }
 }));
 
-/* --- JSONインポート機能の改善版 --- */
+/* --- JSONインポート機能の最終修正版 --- */
 document.getElementById('json-input').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -33,30 +33,42 @@ document.getElementById('json-input').addEventListener('change', function(e) {
         try {
             const importedData = JSON.parse(event.target.result);
             
-            // 1. プロジェクト情報の保存
-            if (importedData.title) localStorage.setItem('manga_project_title', importedData.title);
-            if (importedData.deadlineDate) localStorage.setItem('manga_deadline', importedData.deadlineDate);
-            if (importedData.plot) localStorage.setItem('manga_plot_text', importedData.plot);
+            // 1. 保存用のデータを今のアプリの構造（savedData）に合わせる
+            const newData = {
+                title: importedData.title || "無題のプロジェクト",
+                plot: importedData.plot || "",
+                deadlineDate: importedData.deadlineDate || "",
+                // pagesは文字列の配列として保存（今のrenderPagesの仕様に合わせる）
+                pages: Array.isArray(importedData.pages) ? importedData.pages : [],
+                // 感情データを emotions オブジェクトとして保持
+                emotions: {},
+                gantt: importedData.gantt || {
+                    'プロット': {start: '', end: ''},
+                    'ネーム': {start: '', end: ''},
+                    '下書き': {start: '', end: ''},
+                    'ペン入れ': {start: '', end: ''},
+                    '仕上げ': {start: '', end: ''}
+                }
+            };
 
-            // 2. ページデータの構築（ここが重要！）
-            // 画面の数に合わせるのではなく、JSONにあるデータの数だけ新しく配列を作ります
-            const newPages = importedData.pages.map((content, index) => {
-                const pageNum = index + 1;
-                return {
-                    content: content,
-                    // JSON内の emotions オブジェクトから該当ページの色を取得
-                    emotion: (importedData.emotions && importedData.emotions[pageNum]) 
-                             ? importedData.emotions[pageNum] 
-                             : ""
-                };
-            });
+            // 2. 感情データ(emotions)を 0 から始まるインデックスに変換して格納
+            if (importedData.emotions) {
+                Object.keys(importedData.emotions).forEach(pageNum => {
+                    // JSONが1始まり(P.1)なら、配列のインデックスに合わせて -1 する
+                    const index = parseInt(pageNum) - 1;
+                    if (index >= 0) {
+                        newData.emotions[index] = importedData.emotions[pageNum];
+                    }
+                });
+            }
 
-            // 3. ローカルストレージを完全に上書き
-            localStorage.setItem('manga_progress_data', JSON.stringify(newPages));
+            // 3. 全体データを一つのキー（STORAGE_KEY）で保存する
+            // これにより、リロード後に savedData が正しくこの内容を読み込みます
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
 
-            alert(`${newPages.length}ページ分のデータを読み込みました！`);
+            alert(`${newData.pages.length}ページ分のデータを読み込みました！`);
             
-            // 4. 画面をリロードして、新しいページ数で描き直させる
+            // 4. 画面をリロードして反映
             location.reload(); 
 
         } catch (err) {
