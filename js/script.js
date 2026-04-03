@@ -23,7 +23,7 @@ let savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify({
     }
 }));
 
-/* --- JSONインポート機能の強化版 --- */
+/* --- JSONインポート機能の改善版 --- */
 document.getElementById('json-input').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -33,39 +33,35 @@ document.getElementById('json-input').addEventListener('change', function(e) {
         try {
             const importedData = JSON.parse(event.target.result);
             
-            // 1. 基本データの復元
-            if (importedData.title) {
-                localStorage.setItem('manga_project_title', importedData.title);
-            }
-            if (importedData.deadlineDate) {
-                localStorage.setItem('manga_deadline', importedData.deadlineDate);
-            }
-            if (importedData.plot) {
-                localStorage.setItem('manga_plot_text', importedData.plot);
-            }
+            // 1. プロジェクト情報の保存
+            if (importedData.title) localStorage.setItem('manga_project_title', importedData.title);
+            if (importedData.deadlineDate) localStorage.setItem('manga_deadline', importedData.deadlineDate);
+            if (importedData.plot) localStorage.setItem('manga_plot_text', importedData.plot);
 
-            // 2. ページ内容と感情データの統合
-            // JSONの pages 配列を元に、新しい内部用データ構造を作ります
-            const combinedPages = importedData.pages.map((content, index) => {
+            // 2. ページデータの構築（ここが重要！）
+            // 画面の数に合わせるのではなく、JSONにあるデータの数だけ新しく配列を作ります
+            const newPages = importedData.pages.map((content, index) => {
                 const pageNum = index + 1;
                 return {
                     content: content,
-                    // emotions オブジェクトから該当するキーの感情を取得
-                    emotion: importedData.emotions && importedData.emotions[pageNum] 
+                    // JSON内の emotions オブジェクトから該当ページの色を取得
+                    emotion: (importedData.emotions && importedData.emotions[pageNum]) 
                              ? importedData.emotions[pageNum] 
                              : ""
                 };
             });
 
-            // 統合したデータを保存
-            localStorage.setItem('manga_progress_data', JSON.stringify(combinedPages));
+            // 3. ローカルストレージを完全に上書き
+            localStorage.setItem('manga_progress_data', JSON.stringify(newPages));
 
-            alert("データを読み込みました！");
-            location.reload(); // 再描画
+            alert(`${newPages.length}ページ分のデータを読み込みました！`);
+            
+            // 4. 画面をリロードして、新しいページ数で描き直させる
+            location.reload(); 
 
         } catch (err) {
-            console.error(err);
-            alert("JSONの読み込みに失敗しました。形式を確認してください。");
+            console.error("Import Error:", err);
+            alert("JSONの読み込みに失敗しました。ファイルの中身を確認してください。");
         }
     };
     reader.readAsText(file);
